@@ -14,7 +14,14 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from wakeonlan import send_magic_packet
 
-logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(asctime)s - %(message)s")
+stream_handler = logging.StreamHandler(sys.stdout)
+stream_handler.setFormatter(logging.Formatter("[%(levelname)s] %(asctime)s - %(message)s"))
+
+logging.basicConfig(format="[%(levelname)s] %(asctime)s - %(message)s",
+                    level=logging.WARNING,
+                    handlers=[
+                        stream_handler
+                    ])
 
 LEVEL = {
     0: 'INFO',
@@ -280,11 +287,16 @@ class UPSChecker:
 
 
 if __name__ == '__main__':
+
     if not len(sys.argv) > 1:
         logging.error("Missing config file path argument! Please include one.")
         exit(0)
     try:
-        check = UPSChecker(load_config(sys.argv[1]))
+        config = load_config(sys.argv[1])
+        log_level = logging.getLevelName(config['general']['log_level'])
+
+        logging.getLogger().setLevel(log_level)
+        check = UPSChecker(config)
     except FileNotFoundError:
         logging.error("Invalid config file passed.")
     except KeyboardInterrupt:
