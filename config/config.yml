@@ -1,0 +1,45 @@
+general:
+    name: UPS
+    nut_name: pi
+    nut_host: 192.168.1.2
+    nut_port: 3493
+    nut_login: upsmon
+    nut_password: password
+    log_level: 0
+    host_checkup:
+        interval: 30s
+    alerts:
+        triggers:
+            unexpected_error: true
+            host_unreachable: true
+            host_connection_fail: true
+            ups_status_change: true
+            host_turned_off: true
+        smtp:
+            enabled: true
+            host: smtp.somemailserver.net
+            port: 465
+            user: user@domain
+            password: somebigpassword
+            to_address: powerfail@mydomain.com
+
+
+hosts:
+    192.168.18.207:
+        method: ssh
+        username: root
+        private_rsa_key: /Users/ivan/.ssh/id_rsa
+        wol_mac: 11:11:11:11:11:11
+        port: 22
+        runtime_battery_charge: 25
+        commands:
+          - 'shutdown -h'
+    192.168.18.103:
+        method: ssh
+        username: root
+        private_rsa_key: /Users/ivan/.ssh/another_id_rsa
+        port: 22
+        runtime_limit: 300
+        wol_mac: 10:bb:cc:dd:55:dd
+        commands:
+        - 'shutdown -h'
